@@ -1,73 +1,67 @@
-#define Button1 4
-#define Button2 3
+#define Button1 3
+#define ledMerah 4    
+#define ledKuning 2   
 #define pot A0
 
-//Motor 1(atas)
 const int PWM1 = 5;
 const int in4 = 6;
 const int in3 = 7;
 
-int powerOn = 0;
-int isMaju = 1;
+volatile bool motorStop = false;
+unsigned long waktuSebelumnya = 0;
+const long interval = 1000;     
+int stateLedKuning = LOW;
 
-void setup()
-{
+void setup() {
   pinMode(PWM1, OUTPUT);
   pinMode(in4, OUTPUT);
   pinMode(in3, OUTPUT);
-  
-  pinMode(Button1, INPUT_PULLUP);
-  pinMode(Button2, INPUT_PULLUP);
-  Serial.begin(9600);
-  
-  
-  berhenti();
+  pinMode(ledMerah, OUTPUT);
+  pinMode(ledKuning, OUTPUT); 
+  pinMode(Button1, INPUT_PULLUP); 
+  attachInterrupt(digitalPinToInterrupt(Button1), fungsiIsr, FALLING);
+}
+
+void fungsiIsr() {
+  motorStop = !motorStop; 
+}
+
+void maju(int kecepatan) {
+  digitalWrite(in4, LOW);
+  digitalWrite(in3, HIGH);
+  analogWrite(PWM1, kecepatan);
+}
+
+void mundur(int kecepatan) {
+  digitalWrite(in4, HIGH);
+  digitalWrite(in3, LOW);
+  analogWrite(PWM1, kecepatan);
+}
+
+void berhenti() {
+  digitalWrite(in4, LOW);
+  digitalWrite(in3, LOW);
+  analogWrite(PWM1, 0);
+}
+
+void loop() {
  
-}
+  int nilaiPot = analogRead(pot);
+  int kecepatan = map(nilaiPot, 0, 1023, 0, 255);
 
-void maju(int kecepatan){
-
- digitalWrite(in4, LOW);
- digitalWrite(in3, HIGH);
- analogWrite(PWM1, kecepatan);
- delay(25);
-        
-}
-void mundur(int kecepatan){
- digitalWrite(in4, HIGH);
- digitalWrite(in3, LOW);
- analogWrite(PWM1, kecepatan);
- delay(25);
-        
-}
-void berhenti(){
   
- digitalWrite(in4, LOW);
- digitalWrite(in3, LOW);
- analogWrite(PWM1, 0);
- delay(25);
-        
-
-}
-void loop(){
-  Serial.println("btn1");Serial.println(digitalRead(Button1));
-  Serial.println("btn2");Serial.println(digitalRead(Button2));
-  if(digitalRead(Button1)== LOW){
-    powerOn = !powerOn;
-    delay(250);
-  }
-  
-  if(powerOn && digitalRead(Button2)== LOW){
-    isMaju = !isMaju;
-    delay(250);
-  }
-   int speed = map(analogRead(pot), 0, 1023, 0, 255);
-  
-  if(!powerOn){
+  if (motorStop == false) {
+    maju(kecepatan); 
+    digitalWrite(ledMerah, LOW);
+  } else {
     berhenti();
-  }else if(isMaju == 1){
-    maju(speed);
-  }else{
-    mundur(speed);
+    digitalWrite(ledMerah, HIGH);
+  }
+  unsigned long waktuSekarang = millis();
+  
+  if (waktuSekarang - waktuSebelumnya >= interval) {
+    waktuSebelumnya = waktuSekarang; 
+    stateLedKuning =!stateLedKuning;
+    digitalWrite(ledKuning, stateLedKuning);
   }
 }

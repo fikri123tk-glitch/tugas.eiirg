@@ -10,37 +10,67 @@
 
 void maju(int kecepatan)
 {
-  
-  
-  
+digitalWrite(M1_IN_B, LOW);
+digitalWrite(M1_IN_A, HIGH);
+analogWrite(M1_PWM, kecepatan);
+delay(25);
+
+digitalWrite(M2_IN_B, LOW);
+digitalWrite(M2_IN_A, HIGH);
+analogWrite(M2_PWM, kecepatan);
+ delay(25);
 }
 
 void mundur(int kecepatan) 
 {
-  
-  
-  
+  digitalWrite(M1_IN_B, HIGH);
+  digitalWrite(M1_IN_A, LOW);
+  analogWrite(M1_PWM, kecepatan);
+  delay(25);
+
+  digitalWrite(M2_IN_B, HIGH);
+  digitalWrite(M2_IN_A, LOW);
+  analogWrite(M2_PWM, kecepatan);
+  delay(25);
 }
 
 void belokKiri(int kecepatan) 
 {
- 
-  
-  
+ digitalWrite(M1_IN_B, LOW);
+ digitalWrite(M1_IN_A, HIGH);
+ analogWrite(M1_PWM, kecepatan);
+ delay(25);
+
+digitalWrite(M2_IN_B, LOW);
+digitalWrite(M2_IN_A, LOW);
+analogWrite(M2_PWM, kecepatan);
+delay(25);
 }
 
 void belokKanan(int kecepatan) 
 {
-  
-  
- 
+  digitalWrite(M1_IN_B, LOW);
+ digitalWrite(M1_IN_A, LOW);
+ analogWrite(M1_PWM, kecepatan);
+ delay(25);
+
+digitalWrite(M2_IN_B, LOW);
+digitalWrite(M2_IN_A, HIGH);
+analogWrite(M2_PWM, kecepatan);
+delay(25);
 }
 
 void berhenti() 
 {
-  
-  
-  
+  digitalWrite(M1_IN_B, LOW);
+  digitalWrite(M1_IN_A, LOW);
+  analogWrite(M1_PWM, 0);
+  delay(25);
+
+  digitalWrite(M2_IN_B, LOW);
+  digitalWrite(M2_IN_A, LOW);
+  analogWrite(M2_PWM, 0);
+  delay(25);
 }
 
 void setup()
@@ -58,5 +88,20 @@ void setup()
 
 void loop() 
 {
- 
+ int kecepatan = 200;
+
+    maju(kecepatan);
+    delay(2000);
+    
+    mundur(kecepatan);
+    delay(2000);
+    
+    belokKiri(kecepatan);
+    delay(2000);
+    
+    belokKanan(kecepatan);
+    delay(2000);
+    
+    berhenti();
+    delay(2000);
 }
